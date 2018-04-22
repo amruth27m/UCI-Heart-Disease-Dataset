@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[3]:
+# In[19]:
 
 
 import csv
@@ -54,7 +54,11 @@ def summarizeByClass(dataset):
     return summaries
 
 def calculateProbability(x, mean, stdev):
-    exponent = math.exp(-(math.pow(x-mean,2)/(2*math.pow(stdev,2))))   
+    try:
+        exponent = math.exp(-(math.pow(x-mean,2)/(2*math.pow(stdev,2))))
+    except ZeroDivisionError:
+#         print("Standard deviation is zero for the data %s %s %s",(x,mean,stdev))
+        return 0
     return (1 / (math.sqrt(2*math.pi) * stdev)) * exponent
 
 def calculateClassProbabilities(summaries, inputVector):

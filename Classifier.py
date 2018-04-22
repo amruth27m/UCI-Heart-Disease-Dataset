@@ -8,6 +8,7 @@ import csv
 import random
 import math
 
+#loads csv file from disk and return dataset list
 def loadCsv(filename):
     lines = csv.reader(open(filename, "rt"))
     dataset = list(lines)
@@ -15,6 +16,14 @@ def loadCsv(filename):
         dataset[i] = [float(x) for x in dataset[i]]
     return dataset
 
+#convert data to binary class
+def preProcessData(dataset):
+    for data in dataset:
+        if data[-1] != 0:
+            data[-1] = 1;
+    return dataset
+
+#split the dataset to trainset and testset
 def splitDataset(dataset, splitRatio):
     trainSize = int(len(dataset) * splitRatio)
     trainSet = []
@@ -90,17 +99,10 @@ def getPredictions(summaries, testSet):
         predictions.append(result)
     return predictions
 
-def preProcessTestSet(testSet):
-    for x in testSet:
-        if x[-1] != 0:
-            x[-1] = 1
-    return testSet
-
 def getAccuracy(testSet, predictions):
     correct = 0
-    testSet = preProcessTestSet(testSet)
-    for i in range(len(testSet)):
-        if testSet[i][-1] == predictions[i]:
+    for test_iter,prediction in zip(testSet,predictions):
+        if test_iter[-1] == prediction:
             correct += 1
     return (correct/float(len(testSet))) * 100.0
 
@@ -108,6 +110,7 @@ def main():
     filename = 'heartnew.csv'
     splitRatio = 0.67
     dataset = loadCsv(filename)
+    dataset = preProcessData(dataset)
     trainingSet, testSet = splitDataset(dataset, splitRatio)
     print('Split {0} rows into train={1} and test={2} rows'.format(len(dataset), len(trainingSet), len(testSet)))
     # prepare model
@@ -117,4 +120,5 @@ def main():
     accuracy = getAccuracy(testSet, predictions)
     print('Accuracy: {0}%'.format(accuracy))
 main()
+
 

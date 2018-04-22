@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[19]:
+# In[31]:
 
 
 import csv
@@ -78,7 +78,10 @@ def predict(summaries, inputVector):
         if bestLabel is None or probability > bestProb:
             bestProb = probability
             bestLabel = classValue
-    return bestLabel
+    if bestLabel == 0:
+        return bestLabel
+    else:
+        return 1
 
 def getPredictions(summaries, testSet):
     predictions = []
@@ -87,8 +90,15 @@ def getPredictions(summaries, testSet):
         predictions.append(result)
     return predictions
 
+def preProcessTestSet(testSet):
+    for x in testSet:
+        if x[-1] != 0:
+            x[-1] = 1
+    return testSet
+
 def getAccuracy(testSet, predictions):
     correct = 0
+    testSet = preProcessTestSet(testSet)
     for i in range(len(testSet)):
         if testSet[i][-1] == predictions[i]:
             correct += 1
